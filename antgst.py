@@ -54,8 +54,11 @@ def login(code, key, options={}):
     return token
 
 
-def fetch_data(token, option={}):
-    base_url = "https://web.antgst.com/antgst/sms/marketing/sendRecordList"
+def fetch_data(
+    token,
+    option={},
+    base_url="https://web.antgst.com/antgst/sms/marketing/sendRecordList",
+):
     timestamp = int(time.time())
     today = date.today()
     base_query = {
