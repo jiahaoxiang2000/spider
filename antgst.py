@@ -58,12 +58,12 @@ def fetch_data(token, option={}):
     base_url = "https://web.antgst.com/antgst/sms/marketing/sendRecordList"
     timestamp = int(time.time())
     today = date.today()
-    option = {"pageSize": 2000}
     base_query = {
         "_t": timestamp,
         "day": today,
         "column": "createTime",
         "order": "desc",
+        "gatewayDr": "000",
         "field": "countryName,smsTo,sendTime",
         "pageNo": 1,
         "pageSize": 1000,
@@ -73,6 +73,7 @@ def fetch_data(token, option={}):
 
     # Create the URL
     url = f"{base_url}?{urlencode(query)}"
+    print(url)
     headers = {"X-Access-Token": token}
     response = requests.get(url, headers=headers)
 
@@ -88,6 +89,9 @@ def save_data(response):
 
     # Assuming data is a dictionary containing the result and records
     records = data.get("result").get("records")
+    # if records is none, return
+    if len(records) == 0:
+        return
 
     df = pd.DataFrame(records)
 
