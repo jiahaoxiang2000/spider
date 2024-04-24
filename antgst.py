@@ -5,6 +5,7 @@ import json
 import time
 import pandas as pd
 import os
+import concurrent.futures
 
 
 def get_auth_code():
@@ -54,6 +55,15 @@ def login(code, key, options={}):
     return token
 
 
+def fetch_url(args):
+    base_url, query, page_no, token = args
+    query = {**query, "pageNo": page_no}
+    url = f"{base_url}?{urlencode(query)}"
+    headers = {"X-Access-Token": token}
+    response = requests.get(url, headers=headers)
+    return response.text
+
+
 def fetch_data(
     token,
     option={},
@@ -69,34 +79,36 @@ def fetch_data(
         "gatewayDr": "000",
         "field": "countryName,smsTo,sendTime",
         "pageNo": 1,
-        "pageSize": 1000,
     }
     # Combine the dictionaries
-    query = {**base_query, **option}
+    query = {
+        **base_query,
+        **option,
+        "pageSize": 100,
+    }
+
+    total_pages = int(option["pageSize"]) // 100
 
     # Create the URL
-    url = f"{base_url}?{urlencode(query)}"
-    print(url)
-    headers = {"X-Access-Token": token}
-    response = requests.get(url, headers=headers)
+    # Create a ThreadPoolExecutor
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        # Use the executor to fetch all pages
+        pages = list(
+            executor.map(
+                fetch_url,
+                [(base_url, query, i, token) for i in range(1, total_pages + 1)],
+            )
+        )
 
-    return response.text
+    return pages
 
 
 def save_data(response):
-    # Assuming response is a JSON string
-    json_str = response
 
-    # Convert JSON string to Python object
-    data = json.loads(json_str)
-
-    # Assuming data is a dictionary containing the result and records
-    records = data.get("result").get("records")
-    # if records is none, return
-    if len(records) == 0:
+    res = list(map(lambda x: json.loads(x).get("result").get("records"), response))
+    if len(res) == 0:
         return
-
-    df = pd.DataFrame(records)
+    df = pd.concat([pd.DataFrame(item) for item in res])
 
     def get_unique_filename(base_filename, extension):
         counter = 1

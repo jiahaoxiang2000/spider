@@ -7,7 +7,14 @@ import tkinter as tk
 
 from antgst import fetch_data, get_auth_code, login, save_data
 
-countryCode = {"India": "0091", "Nigeria": "00234"}
+countryCode = {
+    "Brazil": "0055",
+    "India": "0091",
+    "Indonesia": "0062",
+    "Philippines": "0063",
+    "Pakistan": "0092",
+}
+
 sms = {
     "market": "https://web.antgst.com/antgst/sms/marketing/sendRecordList",
     "otp": "https://web.antgst.com/antgst/sms/otpPremium/sendRecordList",
