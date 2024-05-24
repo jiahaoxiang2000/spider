@@ -16,8 +16,8 @@ countryCode = {
 }
 
 sms = {
-    "market": "https://web.antgst.com/antgst/sms/marketing/sendRecordList",
     "otp": "https://web.antgst.com/antgst/sms/otpPremium/sendRecordList",
+    "market": "https://web.antgst.com/antgst/sms/marketing/sendRecordList",
 }
 
 
@@ -33,9 +33,9 @@ def submit():
     country = country_list.get(country_list.curselection())
     if country != "ALL":
         option = {**option, "countryCode": countryCode[country]}
-    page_size = page_size_entry.get()
-    if page_size != "":
-        option = {**option, "pageSize": page_size}
+    date = date_entry.get()
+    if date != "":
+        option = {**option, "day": date}
     sms_type = sms_list.get()
     print(user, option, sms_type)
     base_url = sms[sms_type]
@@ -52,7 +52,7 @@ root = tk.Tk()
 
 tk.Label(root, text="Username").grid(row=0)
 tk.Label(root, text="Password").grid(row=1)
-tk.Label(root, text="Data size").grid(row=2)
+tk.Label(root, text="Date").grid(row=2)
 
 # Create the status label
 status_label = tk.Label(root, text="")
@@ -72,13 +72,13 @@ scrollbar.config(command=country_list.yview)
 
 username_entry = tk.Entry(root)
 password_entry = tk.Entry(root, show="*")
-page_size_entry = tk.Entry(root)
+date_entry = tk.Entry(root)
 
 fetch_button = tk.Button(root, text="Fetch", command=submit)
 
 username_entry.grid(row=0, column=1)
 password_entry.grid(row=1, column=1)
-page_size_entry.grid(row=2, column=1)
+date_entry.grid(row=2, column=1)
 sms_list.grid(row=4, column=1)
 country_list.grid(row=5, column=0, sticky="nsew")
 scrollbar.grid(row=5, column=1, sticky="ns")

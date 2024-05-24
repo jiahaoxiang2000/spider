@@ -39,8 +39,8 @@ def login(code, key, options={}):
     # Define the data for the POST request
     # TODO: need to change the username and password by user. no hard code
     data = {
-        "username": "ANT_JYB",
-        "password": "321987qq",
+        "username": "456bet",
+        "password": "456bet888",
         "remember_me": True,
         "captcha": code,
         "checkKey": key,
@@ -87,20 +87,30 @@ def fetch_data(
         "pageSize": 100,
     }
 
-    total_pages = int(option["pageSize"]) // 100
+    total_pages = 1
+    pages = []
+    # Get the total number of pages
+    page = fetch_url((base_url, query, 1, token))
+    total_pages = json.loads(page).get("result").get("pages")
+    # by the total number of pages, get all the pages
+    # we let the fetch_url function request 0.5 s per page to avoid the request being blocked
+    for i in range(1, total_pages + 1):
+        print(f"Fetching page {i} of {total_pages}")
+        pages.append(fetch_url((base_url, query, i, token)))
+        time.sleep(0.5)
+
+    return pages
 
     # Create the URL
     # Create a ThreadPoolExecutor
-    with concurrent.futures.ThreadPoolExecutor() as executor:
-        # Use the executor to fetch all pages
-        pages = list(
-            executor.map(
-                fetch_url,
-                [(base_url, query, i, token) for i in range(1, total_pages + 1)],
-            )
-        )
-
-    return pages
+    # with concurrent.futures.ThreadPoolExecutor() as executor:
+    #     # Use the executor to fetch all pages
+    #     pages = list(
+    #         executor.map(
+    #             fetch_url,
+    #             [(base_url, query, i, token) for i in range(1, total_pages + 1)],
+    #         )
+    #     )
 
 
 def save_data(response):
