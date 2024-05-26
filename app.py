@@ -71,7 +71,7 @@ country_list.selection_set(0)
 scrollbar.config(command=country_list.yview)
 
 username_entry = tk.Entry(root)
-password_entry = tk.Entry(root, show="*")
+password_entry = tk.Entry(root)
 date_entry = tk.Entry(root)
 
 fetch_button = tk.Button(root, text="Fetch", command=submit)
