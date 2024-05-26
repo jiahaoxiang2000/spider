@@ -25,7 +25,7 @@ jobs:
 
             - name: Build application
               run: |
-                  pyinstaller --onefile app.py
+                  pyinstaller --onefile --name app-${{ github.ref }} app.py
 
             - name: Create Release
               id: create_release
